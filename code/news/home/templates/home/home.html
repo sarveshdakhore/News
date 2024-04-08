@@ -1,0 +1,16 @@
+{% extends 'home/layout/layout.html' %}
+
+{% block title %}
+{% if title %}
+NewsX | {{title}}
+{% else %}
+NewsX
+{% endif %}
+{% endblock title %}
+
+{% block body %}
+{% csrf_token %}
+<br><br><br><br>
+
+<h1 style="color: rgb(189, 120, 37);">&ensp;home</h1>
+{% endblock body %}
