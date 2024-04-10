@@ -144,3 +144,16 @@ CRISPY_TEMPLATE_PACK = 'bootstrap5'
 SITE_ID = 1
 LOGIN_REDIRECT_URL = 'home'
 ACCOUNT_ADAPTER = 'home.allauth_adapter.NoMessagesAccountAdapter'
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
+    }
+}
+ACCOUNT_USERNAME_REQUIRED = True
