@@ -11,10 +11,9 @@ def save_email(sender, sociallogin, **kwargs):
     user.save()
     
 
-
 class Story(models.Model):
     user = models.ForeignKey(User, related_name='stories', on_delete=models.CASCADE)
-    title = models.CharField(max_length=200)
+    title = models.CharField(max_length=400)
     url = models.URLField()
     bookmarked_by = models.ManyToManyField(User, related_name='bookmarked_stories', blank=True)
     # add other fields as needed
