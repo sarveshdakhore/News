@@ -19,8 +19,35 @@ def logout_view(request):
 
 def read(request):
     link = request.POST.get('url')
-    return render(request,'home/read.html',{"link":link})
+    title = request.POST.get('title')
+    article = Story.objects.get(title=title)
+    comments_list = []
+    comments = Comment.objects.filter(story=article)
+    for comment in comments:
+        comment_data = [comment.text, comment.user.username]
+        comments_list.append(comment_data)
+    return render(request,'home/read.html',{"link":link, "title":title, "comments":comments_list})
 
+
+def add_comment(request):
+    if request.method == 'POST' and request.user.is_authenticated:
+        comment = request.POST.get('comment')
+        title = request.POST.get('title')
+        link = request.POST.get('link')
+        article = Story.objects.get(title=title)
+        user = request.user
+        
+        comment = Comment.objects.create(user=user, story=article, text=comment)
+        
+        print(comment.text)
+        
+        comments_list = []
+        comments = Comment.objects.filter(story=article)
+        for commentq in comments:
+            comment_data = [commentq.text, commentq.user.username]
+            comments_list.append(comment_data)
+        return render(request,'home/read.html',{"link":link, "title":title, "comments":comments_list})
+    return redirect('home')
 
 
 def article_detail(request, article_id):

@@ -13,8 +13,28 @@ NewsX | Read
 
 <div style="margin: 20px;">
     <h1 class="text-white">Comments</h1>
+    <input type="hidden" name="title" id="title_id" value="{{title}}">
     <div class="scrollable-fiv">
+        <form action="{% url 'add_comment' %}" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="title" value="{{ title }}">
+            <input type="hidden" name="link" value="{{ link }}">
+            <textarea name="comment" rows="4" cols="50"></textarea>
+            <button type="submit">Submit</button>
+        </form>
+        {% if not comments %}
+            <p>No comments yet.</p>
+        {% else %}
+            {% for comment_title, comment_text in comments %}
+                <div class="comment">
+                    <h5>{{ comment_title }}</h5>
+                    <p>{{ comment_text }}</p>
+                </div>
+            {% endfor %}
+        {% endif %}
     </div>
 </div>
 
 {% endblock body %}
+
+{% block script %}{% endblock script %}
