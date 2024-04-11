@@ -14,11 +14,22 @@ class Story(models.Model):
     id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=400,default="")
     url = models.URLField()
+    urlToImage = models.URLField(default="")
     description = models.TextField(default="")
     title_single = models.CharField(max_length=400,default="")
     source = models.CharField(max_length=100,default="")
     author = models.CharField(max_length=100,default="", null=True)
-    bookmarked_by = models.ManyToManyField(User, related_name='bookmarked_stories', blank=True)
+    content = models.TextField(default="")
+    
+    def __str__(self):
+        return f"{self.title} - {self.author} - {self.source}"
+
+class Bookmark(models.Model):
+    story = models.ForeignKey(Story, related_name='bookmarks', on_delete=models.CASCADE)
+    userId = models.IntegerField(null=False)
+    
+    def __str__(self):
+        return f"{self.story} - {self.userId}"
 
 class Comment(models.Model):
     user = models.ForeignKey(User, related_name='comments', on_delete=models.CASCADE)

@@ -8,13 +8,16 @@ def process_articles(data):
     for article in data['articles']:
         unique_id = f"{article['source']['name']}-{article['author']}-{article['publishedAt']}"
         description = article['description'] if article['description'] is not None else ""
+        con = article['content'] if article['content'] is not None else ""
         Story.objects.get_or_create(
             title=unique_id, 
-            url=article['url'], 
+            url=article['url'],
+            urlToImage = str(article['urlToImage']),
             description=description, 
             title_single=article['title'], 
             source=article['source']['name'], 
-            author=article['author']
+            author=article['author'],
+            content = con
         )
 
 def get_top_stories():
