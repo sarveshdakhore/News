@@ -1,8 +1,21 @@
 import requests
-from models import *
+from .models import *
 
 API_KEY = "2e25cce3b0d0481aab616a68309b885c"
-BASE_URL = "https://newsapi.org/v2/top-headlines"
+BASE_URL = "https://newsapi.org/v2/"
+
+def process_articles(data):
+    for article in data['articles']:
+        unique_id = f"{article['source']['name']}-{article['author']}-{article['publishedAt']}"
+        description = article['description'] if article['description'] is not None else ""
+        Story.objects.get_or_create(
+            title=unique_id, 
+            url=article['url'], 
+            description=description, 
+            title_single=article['title'], 
+            source=article['source']['name'], 
+            author=article['author']
+        )
 
 def get_top_stories():
     url = f"{BASE_URL}/top-headlines"
@@ -13,9 +26,7 @@ def get_top_stories():
     }
     response = requests.get(url, params=params)
     data = response.json()
-    for article in data['articles']:
-        unique_id = f"{article['source']['name']}-{article['author']}-{article['publishedAt']}"
-        Story.objects.get_or_create(title=unique_id)
+    process_articles(data)
     return data
 
 def get_new_stories():
@@ -27,9 +38,7 @@ def get_new_stories():
     }
     response = requests.get(url, params=params)
     data = response.json()
-    for article in data['articles']:
-        unique_id = f"{article['source']['name']}-{article['author']}-{article['publishedAt']}"
-        Story.objects.get_or_create(title=unique_id)
+    process_articles(data)
     return data
 
 def get_best_stories():
@@ -41,9 +50,7 @@ def get_best_stories():
     }
     response = requests.get(url, params=params)
     data = response.json()
-    for article in data['articles']:
-        unique_id = f"{article['source']['name']}-{article['author']}-{article['publishedAt']}"
-        Story.objects.get_or_create(title=unique_id)
+    process_articles(data)
     return data
 
 def get_india_stories(category):
@@ -55,9 +62,7 @@ def get_india_stories(category):
     response = requests.get(BASE_URL, params=params)
     data = response.json()
     articles = data["articles"]
-    for article in data['articles']:
-        unique_id = f"{article['source']['name']}-{article['author']}-{article['publishedAt']}"
-        Story.objects.get_or_create(title=unique_id)
+    process_articles(data)
     return articles
 
 def search_stories(query):
@@ -68,10 +73,5 @@ def search_stories(query):
     }
     response = requests.get(url, params=params)
     data = response.json()
-    for article in data['articles']:
-        unique_id = f"{article['source']['name']}-{article['author']}-{article['publishedAt']}"
-        Story.objects.get_or_create(title=unique_id)
+    process_articles(data)
     return data
-
-
-print(get_top_stories())

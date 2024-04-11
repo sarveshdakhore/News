@@ -1,0 +1,4 @@
+.scrollable-div {
+    overflow-y: auto;
+    max-height: 400px /* Adjust the height as per your requirement */
+}

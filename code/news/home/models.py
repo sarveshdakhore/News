@@ -10,22 +10,24 @@ def save_email(sender, sociallogin, **kwargs):
     user.email = sociallogin.account.extra_data.get('email')
     user.save()
     
-
 class Story(models.Model):
-    user = models.ForeignKey(User, related_name='stories', on_delete=models.CASCADE)
-    title = models.CharField(max_length=400)
+    id = models.AutoField(primary_key=True)
+    title = models.CharField(max_length=400,default="")
     url = models.URLField()
+    description = models.TextField(default="")
+    title_single = models.CharField(max_length=400,default="")
+    source = models.CharField(max_length=100,default="")
+    author = models.CharField(max_length=100,default="", null=True)
     bookmarked_by = models.ManyToManyField(User, related_name='bookmarked_stories', blank=True)
-    # add other fields as needed
 
 class Comment(models.Model):
     user = models.ForeignKey(User, related_name='comments', on_delete=models.CASCADE)
     story = models.ForeignKey(Story, related_name='comments', on_delete=models.CASCADE)
     text = models.TextField()
     liked_by = models.ManyToManyField(User, related_name='liked_comments', blank=True)
-    # add other fields as needed
+    
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     karma_points = models.IntegerField()
-    # add other fields as needed
+    

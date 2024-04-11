@@ -1,27 +1,5 @@
-{% extends 'home/layout/layout.html' %}
-{% load static %}
-{% block title %}
-{% if title %}
-NewsX | {{title}}
-{% else %}
-NewsX
-{% endif %}
-{% endblock title %}
-
-{% block head %}
-<link
-			rel="stylesheet"
-			type="text/css"
-			href="{% static 'home/css/home.css' %}"
-		/>
-{% endblock head %}
-
-
-{% block body %}
-{% csrf_token %}
-
 <div style="margin: 20px;">
-    <h1 class="text-white">Top News</h1>
+    <h1 class="text-white">{{cat}}</h1>
     <div class="scrollable-div" >
     {% for article in articles %}
         <div class="card bg-dark" >
@@ -40,6 +18,3 @@ NewsX
         </div>
     {% endfor %}
 </div>
-</div>
-
-{% endblock body %}
