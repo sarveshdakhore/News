@@ -21,16 +21,26 @@ from django.db import IntegrityError
 
 
 
+from functools import wraps
+from django.http import JsonResponse, HttpResponse
+from django.utils import timezone
+from .models import ApiKey, UserProfile
 
 def api_key_and_rate_limit_required(view_func):
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
         # Check API key
-        api_key = "3d9dfbbf-ea0c-41da-9358-86896d62d9b0"
-        print(api_key)
+        api_key = request.META.get('HTTP_API_KEY')  # Adjust to use 'HTTP_API_KEY'
+        print("\n\n\n\n\n\n")
+        print(request.META)
+        print(request.META.get('HTTP_API_KEY'))
+        if not api_key:
+            return JsonResponse({'error': 'API key is missing'}, status=401)
+        
         api_key_obj = ApiKey.objects.filter(key=api_key).first()
         if not api_key_obj:
             return JsonResponse({'error': 'Invalid API key'}, status=401)
+        
         # Check rate limit
         user = api_key_obj.user
         user_profile = UserProfile.objects.get(user=user)
@@ -47,8 +57,8 @@ def api_key_and_rate_limit_required(view_func):
             return HttpResponse('Rate limit exceeded', status=429)
 
         return view_func(request, user, *args, **kwargs)
+    
     return _wrapped_view
-
 
 @csrf_exempt
 @api_key_and_rate_limit_required
