@@ -44,11 +44,13 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
     'django.contrib.sites',
+    'rest_framework',
 
 
 ]
 
 MIDDLEWARE = [
+    'home.middleware.PrintHeadersMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -157,3 +159,11 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 ACCOUNT_USERNAME_REQUIRED = True
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ]
+}
+
+APPEND_SLASH=False

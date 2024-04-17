@@ -3,11 +3,13 @@ from allauth.account.signals import user_signed_up
 from django.dispatch import receiver
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
+
 
 @receiver(user_signed_up)
-def save_email(sender, sociallogin, **kwargs):
-    user = sociallogin.user
-    user.email = sociallogin.account.extra_data.get('email')
+def user_signed_up_(request, user, **kwargs):
+    UserProfile.objects.create(user=user)
+    user.email = request.account.extra_data.get('email')
     user.save()
     
 class Story(models.Model):
@@ -40,5 +42,16 @@ class Comment(models.Model):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    karma_points = models.IntegerField()
+    karma_points = models.IntegerField(default=0)
+    requests_this_hour = models.IntegerField(default=0)
+    last_request_hour = models.IntegerField(default=timezone.now().hour)
+    def __str__(self):
+        return f"{self.user.username}"
     
+    
+class ApiKey(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    key = models.CharField(max_length=255, unique=True, null=False)
+    
+    def __str__(self):
+        return f"{self.user.username} - {self.key}"

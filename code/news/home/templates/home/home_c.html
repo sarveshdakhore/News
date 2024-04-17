@@ -1,0 +1,90 @@
+{% extends 'home/layout/layout.html' %}
+{% load static %}
+{% block title %}
+{% if title %}
+NewsX | {{title}}
+{% else %}
+NewsX
+{% endif %}
+{% endblock title %}
+
+{% block head %}
+<link
+			rel="stylesheet"
+			type="text/css"
+			href="{% static 'home/css/home.css' %}"
+		/>
+{% endblock head %}
+
+
+{% block body %}
+{% csrf_token %}
+
+<div style="margin: 80px;">
+    <h1 class="text-white">Top News</h1>
+    <div class="scrollable-div" >
+    {% for article in articles %}
+        <div class="card bg-dark" >
+            <div class="card-header">
+                <h5 class="text-light text-green">{{ article.source.name }}</h5>
+                <h6 class="text-muted">{{ article.author }}</h6>
+            </div>
+            <div class="card-body text-white">
+                <h4 class="text-light">{{ article.title }}</h4>
+                <p>{{ article.description }}</p>
+                <img src="{{ article.urlToImage }}" alt="{{ article.title }}" class="news-image">
+            </div>
+            <div class="card-footer">
+                
+                <form method="post" action="{% url 'read' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="url" value="{{ article.url }}">
+                    <input type="hidden" name="title" value="{{article.source.name}}-{{article.author}}-{{article.publishedAt}}">
+                    <button type="submit" class="text-secondary">Read More</button>
+                </form>
+                <input type="hidden" name="title" value="{{article.source.name}}-{{article.author}}-{{article.publishedAt}}">
+                {% if user.is_authenticated %}
+                <a name="bk" class="text-warning">Bookmark</a> 
+                {% endif %}
+
+            </div>
+        </div>
+        <br>
+    {% endfor %}
+</div>
+</div>
+
+{% endblock body %}
+
+{% block script %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    {% if user.is_authenticated %}
+    $(document).ready(function() {
+        $("a[name='bk']").click(function(e) {
+            e.preventDefault(); // Prevent default click behavior
+            $.ajax({
+                url: "{% url 'bookmark' %}",
+                method: "POST",
+                data: {
+                    title: $(this).prevAll('input[name="title"]').val(),
+                },
+                success: function(response) {
+                    if(response["status"]=="1"){
+                        console.log("Bookmark added")
+                    }else if(response["status"]=="0"){
+                        console.log("Bookmark removed")
+                    }else{
+                        console.log("Invalid")
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // Handle the error response
+                }
+            });
+        });
+    });
+    {% endif %}
+</script>
+
+{% endblock script %}
